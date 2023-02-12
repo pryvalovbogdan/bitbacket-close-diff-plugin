@@ -1,0 +1,24 @@
+{
+  "manifest_version": 2,
+  "name": "bitbucket auto close diff plugin",
+  "description": "It will close difference what you don't need",
+  "version": "1.0",
+  "icons": {
+    "16": "assets/bitbacket-icon-16.png",
+    "48": "assets/bitbacket-icon-16.png",
+    "128": "assets/bitbacket-icon-16.png"
+  },
+  "content_scripts": [
+    {
+      "js": [
+        "src/content/content.js"
+      ],
+      "css": [
+        "src/stylesheets/content.css"
+      ],
+      "matches": [
+        "https://bitbucket.org/*"
+      ]
+    }
+  ]
+}
