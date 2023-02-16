@@ -1,0 +1,277 @@
+.plugin-btn-wrapper {
+  display: flex;
+  margin-bottom: 5px;
+}
+
+.plugin-wrapper {
+  z-index: 9999999999;
+  position: fixed;
+  left: 55vw;
+  top: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.use-plugin-button {
+  -moz-box-align: baseline;
+  align-items: baseline;
+  border-width: 0px;
+  box-sizing: border-box;
+  display: inline-flex;
+  font-size: inherit;
+  font-style: normal;
+  font-weight: 500;
+  max-width: 100%;
+  outline: none !important;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  background: rgb(0, 82, 204);
+  border-radius: 3px;
+  color: rgb(255, 255, 255) !important;
+  cursor: default;
+  height: 2.28571em;
+  line-height: 2.28571em;
+  padding: 0px 8px;
+  transition: background 0.1s ease-out 0s, box-shadow 0.15s cubic-bezier(0.47, 0.03, 0.49, 1.38) 0s;
+  vertical-align: middle;
+  width: auto;
+}
+
+.use-plugin-button:hover, .use-plugin-button:focus, .use-plugin-button[aria-expanded="true"] {
+  background-color: rgba(0, 82, 204, 0.9);
+  color: rgb(255, 255, 255);
+}
+
+.hidden-settings {
+  display: none;
+  align-items: center;
+  background-color: rgb(255, 255, 255);
+  border-color: transparent transparent rgb(235, 236, 240);
+  border-style: none none solid;
+  border-width: 0px 0px 1px;
+  border-image: none 100% / 1 / 0 stretch;
+  border-radius: 3px 3px 0px 0px;
+  box-sizing: border-box;
+  color: #172b4d;
+  cursor: pointer;
+  flex-wrap: wrap;
+  min-height: 40px;
+  padding: 8px;
+  position: sticky;
+  top: 0px;
+  z-index: 1;
+  text-align: left;
+  font-size: 14px;
+  width: 100%;
+  outline: none;
+  line-height: inherit;
+  margin-top: 4px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  flex-direction: column;
+}
+
+.settings-button {
+  background-color: rgba(0, 82, 204);
+  color: rgb(255, 255, 255);
+  align-self: center;
+  display: flex;
+  flex-shrink: 0;
+  line-height: 0;
+  font-size: 0px;
+  user-select: none;
+  margin: 0px 4px;
+  margin-right: 4px;
+  transition: opacity 0.3s ease 0s;
+  opacity: 1;
+  padding: 4px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.checkbox-wrapper-24 {
+  width: 100%;
+  margin-bottom: 6px;
+  padding-bottom: 6px;
+  box-shadow: rgba(17, 17, 26, 0.1) 0px 1px 0px;
+}
+
+.checkbox-wrapper-24 .checkbox {
+  display: table-cell;
+  width: 100%;
+  height: 100%;
+  vertical-align: middle;
+  text-align: center;
+}
+
+.checkbox-wrapper-24 label {
+  display: inline-block;
+  cursor: pointer;
+  position: relative;
+}
+.checkbox-wrapper-24 label span {
+  display: inline-block;
+  position: relative;
+  background-color: transparent;
+  width: 20px;
+  height: 20px;
+  transform-origin: center;
+  border: 2px solid #36B37E;
+  border-radius: 50%;
+  vertical-align: middle;
+  margin-right: 10px;
+  transition: background-color 150ms 200ms, transform 350ms cubic-bezier(0.78, -1.22, 0.17, 1.89);
+}
+.checkbox-wrapper-24 label span:before {
+  content: "";
+  width: 0px;
+  height: 2px;
+  border-radius: 2px;
+  background: #36B37E;
+  position: absolute;
+  transform: rotate(45deg);
+  top: 9px;
+  left: 7px;
+  transition: width 50ms ease 50ms;
+  transform-origin: 0% 0%;
+}
+.checkbox-wrapper-24 label span:after {
+  content: "";
+  width: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: #36B37E;
+  position: absolute;
+  transform: rotate(305deg);
+  top: 13px;
+  left: 8px;
+  transition: width 50ms ease;
+  transform-origin: 0% 0%;
+}
+.checkbox-wrapper-24 label:hover span:before {
+  width: 5px;
+  transition: width 100ms ease;
+}
+.checkbox-wrapper-24 label:hover span:after {
+  width: 10px;
+  transition: width 150ms ease 100ms;
+}
+
+.checkbox-wrapper-24 input[type=checkbox] {
+  display: none;
+}
+.checkbox-wrapper-24 input[type=checkbox]:checked + label span {
+  background-color: #36B37E;
+  transform: scale(1.25);
+}
+.checkbox-wrapper-24 input[type=checkbox]:checked + label span:after {
+  width: 10px;
+  background: #fff;
+  transition: width 150ms ease 100ms;
+}
+.checkbox-wrapper-24 input[type=checkbox]:checked + label span:before {
+  width: 5px;
+  background: #fff;
+  transition: width 150ms ease 100ms;
+}
+.checkbox-wrapper-24 input[type=checkbox]:checked + label:hover span {
+  background-color: #36B37E;
+  transform: scale(1.25);
+}
+.checkbox-wrapper-24 input[type=checkbox]:checked + label:hover span:after {
+  width: 10px;
+  background: #fff;
+  transition: width 150ms ease 100ms;
+}
+.checkbox-wrapper-24 input[type=checkbox]:checked + label:hover span:before {
+  width: 5px;
+  background: #fff;
+  transition: width 150ms ease 100ms;
+}
+
+
+
+.group 			  {
+  position:relative;
+  margin-bottom:20px;
+}
+.file-text-input 				{
+  font-size:14px;
+  padding: 4px;
+  display:block;
+  width:250px;
+  border:none;
+  border-bottom:1px solid #757575;
+}
+.file-text-input:focus 		{ outline:none; }
+
+/*!* LABEL ======================================= *!*/
+.file-text-label 				 {
+  color: #5264AE;
+  font-size:14px;
+  font-weight:normal;
+  position:absolute;
+  pointer-events:none;
+  left:5px;
+  bottom:-24px;
+  transition:0.2s ease all;
+  -moz-transition:0.2s ease all;
+  -webkit-transition:0.2s ease all;
+}
+
+/* BOTTOM BARS ================================= */
+.bar 	{ position:relative; display:block; width:250px; }
+.bar:before, .bar:after 	{
+  content:'';
+  height:2px;
+  width:0;
+  bottom:1px;
+  position:absolute;
+  background:#5264AE;
+  transition:0.2s ease all;
+  -moz-transition:0.2s ease all;
+  -webkit-transition:0.2s ease all;
+}
+.bar:before {
+  left:50%;
+}
+.bar:after {
+  right:50%;
+}
+
+/* active state */
+.file-text-input:focus ~ .bar:before, input:focus ~ .bar:after {
+  width:50%;
+}
+
+/* HIGHLIGHTER ================================== */
+.highlight {
+  position:absolute;
+  height:60%;
+  width:100px;
+  top:25%;
+  left:0;
+  pointer-events:none;
+  opacity:0.5;
+}
+
+/* active state */
+input:focus ~ .highlight {
+  -webkit-animation:inputHighlighter 0.3s ease;
+  -moz-animation:inputHighlighter 0.3s ease;
+  animation:inputHighlighter 0.3s ease;
+}
+
+/* ANIMATIONS ================ */
+@-webkit-keyframes inputHighlighter {
+  from { background:#5264AE; }
+  to 	{ width:0; background:transparent; }
+}
+@-moz-keyframes inputHighlighter {
+  from { background:#5264AE; }
+  to 	{ width:0; background:transparent; }
+}
+@keyframes inputHighlighter {
+  from { background:#5264AE; }
+  to 	{ width:0; background:transparent; }
+}
