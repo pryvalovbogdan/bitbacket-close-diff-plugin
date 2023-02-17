@@ -6,10 +6,66 @@ const diffSectionSelector = 'section[aria-label="Diffs"]';
 const commentShownSectionSelector = 'div[aria-hidden="false"]';
 const arrowExpandSelector = 'span[aria-label="Expand/collapse file"]';
 const collapseIconSelector2 = 'span[aria-label="collapse"]';
-const hiddenFiles = ['back-end', 'snapshots', 'test.js', 'test.ts', 'package-lock.json'];
+let hiddenFiles = localStorage.getItem('hiddenFiles')?.trim().split(',').map(item => item.trim())
+	|| ['back-end', 'snapshots', 'test.js', 'test.ts', 'package-lock.json'];
 const includeClasses = ['sidebar-expander-panel-heading', 'ak-navigation-resize-button', 'collapse-sidebar-button', pluginClosedClassName];
 
+let isDescriptionHidden = true;
+let isCommentsHidden = true;
 let observerRef = null;
+
+const defaultDescriptionState = localStorage.getItem('isDescriptionHidden');
+const defaultCommentState = localStorage.getItem('isCommentsHidden');
+let isStarted = localStorage.getItem('isStartedPlugin') === 'true';
+
+isDescriptionHidden = defaultDescriptionState === 'true';
+isCommentsHidden = defaultCommentState === 'true';
+
+const isVisible = elem => !!elem && !!( elem.offsetWidth || elem.offsetHeight || elem.getClientRects().length );
+
+function onClickOutside(element) {
+	const outsideClickListener = event => {
+		if (!element.contains(event.target) && isVisible(element)) {
+			element.style.display = 'none';
+		}
+	}
+
+	document.addEventListener('click', outsideClickListener, true);
+}
+
+function toggleDescription (){
+	isDescriptionHidden = !isDescriptionHidden;
+	localStorage.setItem('isDescriptionHidden', isDescriptionHidden);
+}
+
+function toggleComments (){
+	isCommentsHidden = !isCommentsHidden;
+	localStorage.setItem('isCommentsHidden', isCommentsHidden);
+}
+
+function applyBtnHandle () {
+	const input = document.querySelector('#input-file-name-plugin');
+
+	if(input.value){
+		localStorage.setItem('hiddenFiles', input.value);
+
+		if(observerRef){
+			observerRef.disconnect();
+		}
+
+		hiddenFiles = input.value.trim().split(',').map(item => item.trim());
+
+		const hiddenSettings = document.querySelector('.hidden-settings');
+		hiddenSettings.style.display = 'none';
+		hiddenSettings.classList.remove('open')
+		localStorage.setItem('isStartedPlugin', `${!isStarted}`);
+		isStarted = !isStarted;
+
+		startProcessingPlugin()
+
+		alert('Changes applied');
+	}
+}
 
 window.addEventListener('load', () => {
 	const pluginWrapper = document.createElement('div');
@@ -27,28 +83,28 @@ window.addEventListener('load', () => {
 	hiddenSettings.innerHTML = `
 		<div class="checkbox-wrapper-24">
 		  <input type="checkbox" id="check-24" name="check" value="" checked />
-		  <label for="check-24">
-		    <span></span>Is Description hidden
+		  <label for="check-24" id="check-24-label">
+		    <span></span>Hide Description
 		  </label>
 		</div>
 		<div class="checkbox-wrapper-24">
 		  <input type="checkbox" id="check-25" name="check" value="" checked />
-		  <label for="check-25">
-		    <span></span>Is Comments hidden
+		  <label for="check-25" id="check-25-label">
+		    <span></span>Hide Comments
 		  </label>
 		</div>
 		<div class="group">      
-      <input class="file-text-input" type="text" required>
+      <input class="file-text-input" id="input-file-name-plugin" type="text" placeholder="Enter file names separated by commas" required>
       <span class="highlight"></span>
       <span class="bar"></span>
       <label class="file-text-label">File names</label>
     </div>
-    <button class="use-plugin-button">Apply</button>
+    <button class="use-plugin-button" id="apply-btn">Apply</button>
 	`
 
 	span.addEventListener('click', () => {
 		const hiddenSettings = document.querySelector('.hidden-settings');
-		console.log('hiddenSettings', hiddenSettings.classList);
+
 		if(hiddenSettings.classList.contains('open')){
 			hiddenSettings.style.display = 'none';
 			hiddenSettings.classList.remove('open')
@@ -58,9 +114,6 @@ window.addEventListener('load', () => {
 		}
 	})
 
-
-	let isStarted = localStorage.getItem('isStartedPlugin') === 'true';
-
 	if(isStarted){
 		startProcessingPlugin()
 	}
@@ -68,7 +121,6 @@ window.addEventListener('load', () => {
 	const textBtn = `Difference Plugin`;
 
 	const startStopPlugin = (e) => {
-		// const pluginState = !isStarted;
 		if(!isStarted){
 			closeDescription();
 			closeDiff();
@@ -78,13 +130,12 @@ window.addEventListener('load', () => {
 		}
 		localStorage.setItem('isStartedPlugin', `${!isStarted}`);
 		isStarted = !isStarted;
-		// const isStarted2 = localStorage.getItem('isStartedPlugin') === 'started';
 
 		e.target.innerText = `${isStarted ? 'Stop' : 'Start'} ${textBtn}`;
 	}
 
-	pluginBtnWrapper.addEventListener('click', startStopPlugin);
-	console.log('isStarted', isStarted)
+	usePluginButton.addEventListener('click', startStopPlugin);
+
 	pluginBtnWrapper.className = 'plugin-btn-wrapper';
 	usePluginButton.className = 'use-plugin-button';
 	pluginWrapper.className = 'plugin-wrapper';
@@ -98,24 +149,23 @@ window.addEventListener('load', () => {
 	pluginWrapper.append(hiddenSettings);
 	document.body.append(pluginWrapper);
 
+
+	const hiddenSettingsRef = document.querySelector('.hidden-settings');
+
+	onClickOutside(hiddenSettingsRef);
+
+	const inputDescription = document.querySelector('#check-24');
+	const inputComments = document.querySelector('#check-25');
+	const inputFileName = document.querySelector('#input-file-name-plugin');
+	const applyBtn = document.querySelector('#apply-btn');
+
+	inputFileName.defaultValue = localStorage.getItem('hiddenFiles');
+	inputDescription.checked = isDescriptionHidden;
+	inputComments.checked = isCommentsHidden;
+	inputDescription.addEventListener('click', toggleDescription)
+	inputComments.addEventListener('click', toggleComments)
+	applyBtn.addEventListener('click', applyBtnHandle);
 })
-
-function addObserver (){
-	const targetNode = document.querySelector(diffSectionSelector);
-
-	const config = { attributes: false, childList: true, subtree: true };
-
-	closeDiff();
-
-	const callback = () => {
-		// console.log('callback2')
-		closeDiff()
-	};
-
-	const observer = new MutationObserver(callback);
-
-	observer.observe(targetNode, config);
-}
 
 function closeDiff () {
 	const targetNode = document.querySelector(diffSectionSelector);
@@ -140,9 +190,19 @@ function closeDiff () {
 
 function closeDescription (){
 	const collapseIcons = document.querySelectorAll(collapseIconSelector);
-	// console.log('collapseIcons', collapseIcons)
+
 	collapseIcons.forEach(item => {
-		// console.log('closeDescription', item.classList, includeClasses)
+		const parent = item.parentNode.parentNode;
+		const textCheckbox = parent.querySelector('h2')?.innerText || '';
+
+		if(parent.tagName === 'SECTION'){
+			return
+		}
+
+		if((textCheckbox.includes('Description') && !isDescriptionHidden) || (textCheckbox.includes('comment') && !isCommentsHidden)){
+			return
+		}
+
 		if(!includeClasses.some(el => item.getAttribute('data-testid') === el || item.classList.contains(el))){
 			item.classList.add(arrowClosedClassName);
 			item.click()
@@ -162,11 +222,9 @@ function startProcessingPlugin () {
 		closeDiff();
 
 		const collapseButton = document.querySelectorAll(collapseIconSelector);
-		// console.log('collapseIcons', collapseIcons)
 		let some = [];
 
 		collapseButton.forEach(item => {
-			// console.log('closeDescription3', item.classList, includeClasses)
 			if(item.classList.contains(arrowClosedClassName)){
 				some.push(1);
 			}
