@@ -63,7 +63,7 @@ function applyBtnHandle () {
 
 		const usePluginButton = document.querySelector(`.${usePluginButtonClassName}`);
 
-		usePluginButton.innerText = `${isStarted ? 'Stop' : 'Start'} ${textBtn}`;
+		usePluginButton.innerText = `Stop ${textBtn}`;
 
 		startProcessingPlugin()
 
