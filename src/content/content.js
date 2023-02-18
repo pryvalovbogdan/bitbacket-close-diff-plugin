@@ -1,19 +1,34 @@
 const pluginClosedClassName = 'plugin-closed';
 const arrowClosedClassName = 'plugin-arrow-closed';
+const inputFileClassName = 'input-file-name-plugin';
+const settingsButtonClassName = 'settings-button';
+const	pluginBtnWrapperClassName = 'plugin-btn-wrapper';
+const	usePluginButtonClassName = 'use-plugin-button';
+const	pluginWrapperClassName = 'plugin-wrapper';
+const	hiddenSettingsClassName = 'hidden-settings';
+
+const inputDescriptionId = 'check-24';
+const inputCommentsId = 'check-25';
+const applyBtnId = 'apply-btn';
+
 const headerSelector = 'h3[data-qa="bk-filepath"]';
 const collapseIconSelector = 'button[aria-expanded="true"]';
 const diffSectionSelector = 'section[aria-label="Diffs"]';
 const commentShownSectionSelector = 'div[aria-hidden="false"]';
 const arrowExpandSelector = 'span[aria-label="Expand/collapse file"]';
-const collapseIconSelector2 = 'span[aria-label="collapse"]';
-let hiddenFiles = localStorage.getItem('hiddenFiles')?.trim().split(',').map(item => item.trim())
-	|| ['back-end', 'snapshots', 'test.js', 'test.ts', 'package-lock.json'];
 const includeClasses = ['sidebar-expander-panel-heading', 'ak-navigation-resize-button', 'collapse-sidebar-button', pluginClosedClassName];
+const textBtn = 'Difference Plugin';
 
+/** Setting default hiddenFiles getting it from localstorage **/
+let hiddenFiles = localStorage.getItem('hiddenFiles')?.trim().split(',').map(item => item.trim())
+	|| ['snapshots', 'package-lock.json'];
+
+/** Setting default state ofr checkboxes and observer **/
 let isDescriptionHidden = true;
 let isCommentsHidden = true;
 let observerRef = null;
 
+/** Getting actual state from localstorage **/
 const defaultDescriptionState = localStorage.getItem('isDescriptionHidden');
 const defaultCommentState = localStorage.getItem('isCommentsHidden');
 let isStarted = localStorage.getItem('isStartedPlugin') === 'true';
@@ -21,45 +36,34 @@ let isStarted = localStorage.getItem('isStartedPlugin') === 'true';
 isDescriptionHidden = defaultDescriptionState === 'true';
 isCommentsHidden = defaultCommentState === 'true';
 
-const isVisible = elem => !!elem && !!( elem.offsetWidth || elem.offsetHeight || elem.getClientRects().length );
-
-function onClickOutside(element) {
-	const outsideClickListener = event => {
-		if (!element.contains(event.target) && isVisible(element)) {
-			element.style.display = 'none';
-		}
-	}
-
-	document.addEventListener('click', outsideClickListener, true);
-}
-
-function toggleDescription (){
-	isDescriptionHidden = !isDescriptionHidden;
-	localStorage.setItem('isDescriptionHidden', isDescriptionHidden);
-}
-
-function toggleComments (){
-	isCommentsHidden = !isCommentsHidden;
-	localStorage.setItem('isCommentsHidden', isCommentsHidden);
-}
-
 function applyBtnHandle () {
-	const input = document.querySelector('#input-file-name-plugin');
+	const input = document.querySelector(`#${inputFileClassName}`);
 
 	if(input.value){
+		/** Setting entered files into storage **/
 		localStorage.setItem('hiddenFiles', input.value);
 
+		/** Stopping previous picked files to close by plugin **/
 		if(observerRef){
 			observerRef.disconnect();
 		}
 
+		/** Converting string to array of file names **/
 		hiddenFiles = input.value.trim().split(',').map(item => item.trim());
 
-		const hiddenSettings = document.querySelector('.hidden-settings');
+		/** Closing opened settings modal **/
+		const hiddenSettings = document.querySelector(`.${hiddenSettingsClassName}`);
+
 		hiddenSettings.style.display = 'none';
 		hiddenSettings.classList.remove('open')
+
+		/** Changing state of start/stop button **/
 		localStorage.setItem('isStartedPlugin', `${!isStarted}`);
 		isStarted = !isStarted;
+
+		const usePluginButton = document.querySelector(`.${usePluginButtonClassName}`);
+
+		usePluginButton.innerText = `${isStarted ? 'Stop' : 'Start'} ${textBtn}`;
 
 		startProcessingPlugin()
 
@@ -71,15 +75,17 @@ window.addEventListener('load', () => {
 	const pluginWrapper = document.createElement('div');
 	const pluginBtnWrapper = document.createElement('div');
 	const usePluginButton = document.createElement('button');
-	const span = document.createElement('span');
+	const settingsButton = document.createElement('span');
 	const hiddenSettings = document.createElement('div');
 
-	span.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" role="presentation">
+	/** Adding svg **/
+	settingsButton.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" role="presentation">
 		<path d="M8.292 10.293a1.009 1.009 0 000 1.419l2.939 2.965c.218.215.5.322.779.322s.556-.107.769-.322l2.93-2.955a1.01 1.01 0 000-1.419.987.987 0 00-1.406 0l-2.298 2.317-2.307-2.327a.99.99 0 00-1.406 0z" fill="currentColor" fill-rule="evenodd">
 		</path></svg>`
 
-	span.className = 'settings-button'
+	settingsButton.className = settingsButtonClassName;
 
+	/** Filling settings modal  **/
 	hiddenSettings.innerHTML = `
 		<div class="checkbox-wrapper-24">
 		  <input type="checkbox" id="check-24" name="check" value="" checked />
@@ -102,69 +108,42 @@ window.addEventListener('load', () => {
     <button class="use-plugin-button" id="apply-btn">Apply</button>
 	`
 
-	span.addEventListener('click', () => {
-		const hiddenSettings = document.querySelector('.hidden-settings');
-
-		if(hiddenSettings.classList.contains('open')){
-			hiddenSettings.style.display = 'none';
-			hiddenSettings.classList.remove('open')
-		} else {
-			hiddenSettings.style.display = 'flex';
-			hiddenSettings.classList.add('open')
-		}
-	})
-
+	/** Starting plugin if user picked to start it before **/
 	if(isStarted){
 		startProcessingPlugin()
 	}
 
-	const textBtn = `Difference Plugin`;
-
-	const startStopPlugin = (e) => {
-		if(!isStarted){
-			closeDescription();
-			closeDiff();
-			startProcessingPlugin();
-		} else {
-			observerRef.disconnect();
-		}
-		localStorage.setItem('isStartedPlugin', `${!isStarted}`);
-		isStarted = !isStarted;
-
-		e.target.innerText = `${isStarted ? 'Stop' : 'Start'} ${textBtn}`;
-	}
-
-	usePluginButton.addEventListener('click', startStopPlugin);
-
-	pluginBtnWrapper.className = 'plugin-btn-wrapper';
-	usePluginButton.className = 'use-plugin-button';
-	pluginWrapper.className = 'plugin-wrapper';
-	hiddenSettings.className = 'hidden-settings';
+	pluginBtnWrapper.className = pluginBtnWrapperClassName;
+	usePluginButton.className = usePluginButtonClassName;
+	pluginWrapper.className = pluginWrapperClassName;
+	hiddenSettings.className = hiddenSettingsClassName;
 
 	usePluginButton.innerText = `${isStarted ? 'Stop' : 'Start'} ${textBtn}`;
 
 	pluginBtnWrapper.append(usePluginButton);
-	pluginBtnWrapper.append(span);
+	pluginBtnWrapper.append(settingsButton);
 	pluginWrapper.append(pluginBtnWrapper);
 	pluginWrapper.append(hiddenSettings);
+
 	document.body.append(pluginWrapper);
 
+	onClickOutside(hiddenSettings);
 
-	const hiddenSettingsRef = document.querySelector('.hidden-settings');
+	const inputDescription = document.querySelector(`#${inputDescriptionId}`);
+	const inputComments = document.querySelector(`#${inputCommentsId}`);
+	const inputFileName = document.querySelector(`#${inputFileClassName}`);
+	const applyBtn = document.querySelector(`#${applyBtnId}`);
 
-	onClickOutside(hiddenSettingsRef);
-
-	const inputDescription = document.querySelector('#check-24');
-	const inputComments = document.querySelector('#check-25');
-	const inputFileName = document.querySelector('#input-file-name-plugin');
-	const applyBtn = document.querySelector('#apply-btn');
-
-	inputFileName.defaultValue = localStorage.getItem('hiddenFiles');
+	/** Setting value inside input file name and checkboxes state **/
+	inputFileName.defaultValue = localStorage.getItem('hiddenFiles') ? localStorage.getItem('hiddenFiles') : hiddenFiles;
 	inputDescription.checked = isDescriptionHidden;
 	inputComments.checked = isCommentsHidden;
+
 	inputDescription.addEventListener('click', toggleDescription)
 	inputComments.addEventListener('click', toggleComments)
 	applyBtn.addEventListener('click', applyBtnHandle);
+	settingsButton.addEventListener('click', toggleSettings)
+	usePluginButton.addEventListener('click', startStopPlugin);
 })
 
 function closeDiff () {
@@ -193,16 +172,20 @@ function closeDescription (){
 
 	collapseIcons.forEach(item => {
 		const parent = item.parentNode.parentNode;
+		/** Getting exact field name (Description/Comments) **/
 		const textCheckbox = parent.querySelector('h2')?.innerText || '';
 
+		/** Excluding section tag because it provides sidebar buttons that we don't need **/
 		if(parent.tagName === 'SECTION'){
 			return
 		}
 
+		/** Checking state of checkboxes and deciding to close or not fields **/
 		if((textCheckbox.includes('Description') && !isDescriptionHidden) || (textCheckbox.includes('comment') && !isCommentsHidden)){
 			return
 		}
 
+		/** Selecting fields to close **/
 		if(!includeClasses.some(el => item.getAttribute('data-testid') === el || item.classList.contains(el))){
 			item.classList.add(arrowClosedClassName);
 			item.click()
@@ -219,26 +202,85 @@ function startProcessingPlugin () {
 	const config = { attributes: false, childList: true, subtree: true };
 
 	const callback = () => {
+		/** Calling close difference files **/
 		closeDiff();
 
+		/** Getting all collapse buttons **/
 		const collapseButton = document.querySelectorAll(collapseIconSelector);
-		let some = [];
 
+		let alreadyCollapsedButtons = [];
+		/** Checking is button already collapsed **/
 		collapseButton.forEach(item => {
 			if(item.classList.contains(arrowClosedClassName)){
-				some.push(1);
+				alreadyCollapsedButtons.push(1);
 			}
 
 		});
-
-		if(some.length){
+		/** Not calling close descriptions if button already collapsed**/
+		if(alreadyCollapsedButtons.length){
 			return;
 		}
 
+		/** Calling close Description files **/
 		closeDescription();
 	};
 
+	/** Calling callback for first time to close selected fields don't wait till observer trigger it. **/
+	callback();
+
+	/** Saving observer ref to be able to stop it. **/
 	observerRef = new MutationObserver(callback);
 
+	/** Setting config **/
 	observerRef.observe(content, config);
 }
+
+/** Check is hidden settings modal open **/
+const isVisible = elem => !!elem && !!( elem.offsetWidth || elem.offsetHeight || elem.getClientRects().length );
+
+/** Handle to close settings modal on outside click **/
+function onClickOutside(element) {
+	const outsideClickListener = event => {
+		if (!element.contains(event.target) && isVisible(element)) {
+			element.style.display = 'none';
+		}
+	}
+
+	document.addEventListener('click', outsideClickListener, true);
+}
+
+function toggleDescription (){
+	isDescriptionHidden = !isDescriptionHidden;
+	localStorage.setItem('isDescriptionHidden', isDescriptionHidden);
+}
+
+function toggleComments (){
+	isCommentsHidden = !isCommentsHidden;
+	localStorage.setItem('isCommentsHidden', isCommentsHidden);
+}
+
+function toggleSettings () {
+	const hiddenSettings = document.querySelector('.hidden-settings');
+
+	if(hiddenSettings.classList.contains('open')){
+		hiddenSettings.style.display = 'none';
+		hiddenSettings.classList.remove('open')
+	} else {
+		hiddenSettings.style.display = 'flex';
+		hiddenSettings.classList.add('open')
+	}
+}
+
+function startStopPlugin (e) {
+	if(!isStarted){
+		startProcessingPlugin();
+	} else {
+		observerRef.disconnect();
+	}
+
+	localStorage.setItem('isStartedPlugin', `${!isStarted}`);
+	isStarted = !isStarted;
+
+	e.target.innerText = `${isStarted ? 'Stop' : 'Start'} ${textBtn}`;
+}
+
