@@ -39,7 +39,7 @@ isCommentsHidden = defaultCommentState === 'true';
 function applyBtnHandle () {
 	const input = document.querySelector(`#${inputFileClassName}`);
 
-	if(input.value){
+	if(input.value.trim()){
 		/** Setting entered files into storage **/
 		localStorage.setItem('hiddenFiles', input.value);
 
@@ -100,7 +100,7 @@ window.addEventListener('load', () => {
 		  </label>
 		</div>
 		<div class="group">      
-      <input class="file-text-input" id="input-file-name-plugin" type="text" placeholder="Enter file names separated by commas" required>
+      <textarea rows="3" class="file-text-input" id="input-file-name-plugin" placeholder="Enter file names separated by commas" required ></textarea>
       <span class="highlight"></span>
       <span class="bar"></span>
       <label class="file-text-label">File names</label>
@@ -135,7 +135,7 @@ window.addEventListener('load', () => {
 	const applyBtn = document.querySelector(`#${applyBtnId}`);
 
 	/** Setting value inside input file name and checkboxes state **/
-	inputFileName.defaultValue = localStorage.getItem('hiddenFiles') ? localStorage.getItem('hiddenFiles') : hiddenFiles;
+	inputFileName.value = localStorage.getItem('hiddenFiles') ? localStorage.getItem('hiddenFiles') : hiddenFiles;
 	inputDescription.checked = isDescriptionHidden;
 	inputComments.checked = isCommentsHidden;
 
