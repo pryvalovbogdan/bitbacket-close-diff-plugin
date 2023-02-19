@@ -169,6 +169,11 @@ function closeDiff () {
 
 function closeDescription (){
 	const collapseIcons = document.querySelectorAll(collapseIconSelector);
+	const isSourcePage = document.querySelector('table[data-qa="repository-directory"]');
+
+	if(isSourcePage){
+		return;
+	}
 
 	collapseIcons.forEach(item => {
 		const parent = item.parentNode.parentNode;
@@ -198,6 +203,10 @@ function closeDescription (){
 
 function startProcessingPlugin () {
 	const content = document.querySelector('div[data-testid="Content"]');
+
+	if (!content) {
+		return
+	}
 
 	const config = { attributes: false, childList: true, subtree: true };
 

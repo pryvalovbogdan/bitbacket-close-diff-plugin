@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "bitbucket auto close diff plugin",
   "description": "It will close difference what you don't need",
-  "version": "1.0",
+  "version": "1.0.1",
   "icons": {
     "16": "assets/bitbacket-icon-16.png",
     "48": "assets/bitbacket-icon-48.png",
