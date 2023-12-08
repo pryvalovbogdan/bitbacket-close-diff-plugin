@@ -1,5 +1,5 @@
 # bitbacket-close-diff-plugin
-Plugin wich will close selected diff in repository automaticly
+Plugin will close selected difference in repository automatically
 ## To use plugin just pull it open extension page and add plugin folder there
 
 * [Firefox extension page](about:debugging#/runtime/this-firefox) : [about:debugging#/runtime/this-firefox](about:debugging#/runtime/this-firefox)

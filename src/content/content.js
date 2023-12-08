@@ -2,10 +2,10 @@ const pluginClosedClassName = 'plugin-closed';
 const arrowClosedClassName = 'plugin-arrow-closed';
 const inputFileClassName = 'input-file-name-plugin';
 const settingsButtonClassName = 'settings-button';
-const	pluginBtnWrapperClassName = 'plugin-btn-wrapper';
-const	usePluginButtonClassName = 'use-plugin-button';
-const	pluginWrapperClassName = 'plugin-wrapper';
-const	hiddenSettingsClassName = 'hidden-settings';
+const pluginBtnWrapperClassName = 'plugin-btn-wrapper';
+const usePluginButtonClassName = 'use-plugin-button';
+const pluginWrapperClassName = 'plugin-wrapper';
+const hiddenSettingsClassName = 'hidden-settings';
 
 const inputDescriptionId = 'check-24';
 const inputCommentsId = 'check-25';
@@ -39,7 +39,7 @@ isCommentsHidden = defaultCommentState === 'true';
 function applyBtnHandle () {
 	const input = document.querySelector(`#${inputFileClassName}`);
 
-	if(input.value){
+	if(input.value.trim()){
 		/** Setting entered files into storage **/
 		localStorage.setItem('hiddenFiles', input.value);
 
@@ -55,7 +55,7 @@ function applyBtnHandle () {
 		const hiddenSettings = document.querySelector(`.${hiddenSettingsClassName}`);
 
 		hiddenSettings.style.display = 'none';
-		hiddenSettings.classList.remove('open')
+		hiddenSettings.classList.remove('open');
 
 		/** Changing state of start/stop button **/
 		localStorage.setItem('isStartedPlugin', `${!isStarted}`);
@@ -63,9 +63,9 @@ function applyBtnHandle () {
 
 		const usePluginButton = document.querySelector(`.${usePluginButtonClassName}`);
 
-		usePluginButton.innerText = `${isStarted ? 'Stop' : 'Start'} ${textBtn}`;
+		usePluginButton.innerText = `Stop ${textBtn}`;
 
-		startProcessingPlugin()
+		startProcessingPlugin();
 
 		alert('Changes applied');
 	}
@@ -100,7 +100,7 @@ window.addEventListener('load', () => {
 		  </label>
 		</div>
 		<div class="group">      
-      <input class="file-text-input" id="input-file-name-plugin" type="text" placeholder="Enter file names separated by commas" required>
+      <textarea rows="3" class="file-text-input" id="input-file-name-plugin" placeholder="Enter file names separated by commas" required ></textarea>
       <span class="highlight"></span>
       <span class="bar"></span>
       <label class="file-text-label">File names</label>
@@ -135,7 +135,7 @@ window.addEventListener('load', () => {
 	const applyBtn = document.querySelector(`#${applyBtnId}`);
 
 	/** Setting value inside input file name and checkboxes state **/
-	inputFileName.defaultValue = localStorage.getItem('hiddenFiles') ? localStorage.getItem('hiddenFiles') : hiddenFiles;
+	inputFileName.value = localStorage.getItem('hiddenFiles') ? localStorage.getItem('hiddenFiles') : hiddenFiles;
 	inputDescription.checked = isDescriptionHidden;
 	inputComments.checked = isCommentsHidden;
 
@@ -159,7 +159,7 @@ function closeDiff () {
 
 					if (!arrow.classList.contains(pluginClosedClassName)) {
 						arrow.classList.add(pluginClosedClassName);
-						arrow.click()
+						arrow.click();
 					}
 				}
 			}
@@ -169,6 +169,11 @@ function closeDiff () {
 
 function closeDescription (){
 	const collapseIcons = document.querySelectorAll(collapseIconSelector);
+	const isSourcePage = document.querySelector('table[data-qa="repository-directory"]');
+
+	if(isSourcePage){
+		return;
+	}
 
 	collapseIcons.forEach(item => {
 		const parent = item.parentNode.parentNode;
@@ -176,7 +181,7 @@ function closeDescription (){
 		const textCheckbox = parent.querySelector('h2')?.innerText || '';
 
 		/** Excluding section tag because it provides sidebar buttons that we don't need **/
-		if(parent.tagName === 'SECTION'){
+		if(parent.tagName === 'SECTION' || parent.querySelector('[aria-label="Directory"]')){
 			return
 		}
 
@@ -188,7 +193,7 @@ function closeDescription (){
 		/** Selecting fields to close **/
 		if(!includeClasses.some(el => item.getAttribute('data-testid') === el || item.classList.contains(el))){
 			item.classList.add(arrowClosedClassName);
-			item.click()
+			item.click();
 		} else {
 			item.classList.remove(arrowClosedClassName);
 		}
@@ -198,6 +203,10 @@ function closeDescription (){
 
 function startProcessingPlugin () {
 	const content = document.querySelector('div[data-testid="Content"]');
+
+	if (!content) {
+		return
+	}
 
 	const config = { attributes: false, childList: true, subtree: true };
 
@@ -214,7 +223,6 @@ function startProcessingPlugin () {
 			if(item.classList.contains(arrowClosedClassName)){
 				alreadyCollapsedButtons.push(1);
 			}
-
 		});
 		/** Not calling close descriptions if button already collapsed**/
 		if(alreadyCollapsedButtons.length){
