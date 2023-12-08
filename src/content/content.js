@@ -2,10 +2,10 @@ const pluginClosedClassName = 'plugin-closed';
 const arrowClosedClassName = 'plugin-arrow-closed';
 const inputFileClassName = 'input-file-name-plugin';
 const settingsButtonClassName = 'settings-button';
-const	pluginBtnWrapperClassName = 'plugin-btn-wrapper';
-const	usePluginButtonClassName = 'use-plugin-button';
-const	pluginWrapperClassName = 'plugin-wrapper';
-const	hiddenSettingsClassName = 'hidden-settings';
+const pluginBtnWrapperClassName = 'plugin-btn-wrapper';
+const usePluginButtonClassName = 'use-plugin-button';
+const pluginWrapperClassName = 'plugin-wrapper';
+const hiddenSettingsClassName = 'hidden-settings';
 
 const inputDescriptionId = 'check-24';
 const inputCommentsId = 'check-25';
@@ -55,7 +55,7 @@ function applyBtnHandle () {
 		const hiddenSettings = document.querySelector(`.${hiddenSettingsClassName}`);
 
 		hiddenSettings.style.display = 'none';
-		hiddenSettings.classList.remove('open')
+		hiddenSettings.classList.remove('open');
 
 		/** Changing state of start/stop button **/
 		localStorage.setItem('isStartedPlugin', `${!isStarted}`);
@@ -65,7 +65,7 @@ function applyBtnHandle () {
 
 		usePluginButton.innerText = `Stop ${textBtn}`;
 
-		startProcessingPlugin()
+		startProcessingPlugin();
 
 		alert('Changes applied');
 	}
@@ -159,7 +159,7 @@ function closeDiff () {
 
 					if (!arrow.classList.contains(pluginClosedClassName)) {
 						arrow.classList.add(pluginClosedClassName);
-						arrow.click()
+						arrow.click();
 					}
 				}
 			}
@@ -181,7 +181,7 @@ function closeDescription (){
 		const textCheckbox = parent.querySelector('h2')?.innerText || '';
 
 		/** Excluding section tag because it provides sidebar buttons that we don't need **/
-		if(parent.tagName === 'SECTION'){
+		if(parent.tagName === 'SECTION' || parent.querySelector('[aria-label="Directory"]')){
 			return
 		}
 
@@ -193,7 +193,7 @@ function closeDescription (){
 		/** Selecting fields to close **/
 		if(!includeClasses.some(el => item.getAttribute('data-testid') === el || item.classList.contains(el))){
 			item.classList.add(arrowClosedClassName);
-			item.click()
+			item.click();
 		} else {
 			item.classList.remove(arrowClosedClassName);
 		}
@@ -223,7 +223,6 @@ function startProcessingPlugin () {
 			if(item.classList.contains(arrowClosedClassName)){
 				alreadyCollapsedButtons.push(1);
 			}
-
 		});
 		/** Not calling close descriptions if button already collapsed**/
 		if(alreadyCollapsedButtons.length){
