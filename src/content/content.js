@@ -181,12 +181,17 @@ function closeDescription (){
 		const textCheckbox = parent.querySelector('h2')?.innerText || '';
 
 		/** Excluding section tag because it provides sidebar buttons that we don't need **/
-		if(parent.tagName === 'SECTION' || parent.querySelector('[aria-label="Directory"]')){
+		if(parent.tagName === 'SECTION'
+			|| parent.querySelector('[aria-label="Directory"]')
+			|| parent.querySelector('[aria-label="Diff actions"]')){
 			return
 		}
 
 		/** Checking state of checkboxes and deciding to close or not fields **/
-		if((textCheckbox.includes('Description') && !isDescriptionHidden) || (textCheckbox.includes('comment') && !isCommentsHidden)){
+		if((textCheckbox.includes('Description') && !isDescriptionHidden)
+			|| (textCheckbox.includes('comment') && !isCommentsHidden)
+			|| textCheckbox.includes('commits')
+			|| textCheckbox.includes('attachments')) {
 			return
 		}
 
