@@ -11,9 +11,9 @@ const inputDescriptionId = 'check-24';
 const inputCommentsId = 'check-25';
 const applyBtnId = 'apply-btn';
 
-const headerSelector = 'h3[data-qa="bk-filepath"]';
+const headerSelector = 'article[data-qa="branch-diff-file"]';
 const collapseIconSelector = 'button[aria-expanded="true"]';
-const diffSectionSelector = 'section[aria-label="Diffs"]';
+const diffSectionSelector = 'div[aria-label="Diff"]';
 const commentShownSectionSelector = 'div[aria-hidden="false"]';
 const arrowExpandSelector = 'span[aria-label="Expand/collapse file"]';
 const includeClasses = ['sidebar-expander-panel-heading', 'ak-navigation-resize-button', 'collapse-sidebar-button', pluginClosedClassName];
@@ -151,11 +151,11 @@ function closeDiff () {
 
 	if(targetNode) {
 		targetNode.querySelectorAll(headerSelector).forEach(item => {
-			if (hiddenFiles.some(el => item.innerText.includes(el))) {
+			if (hiddenFiles.some(el => item.ariaLabel.includes(el))) {
 				const parent = item.parentNode.parentNode.parentNode;
 
 				if (parent.parentNode.querySelector(commentShownSectionSelector)) {
-					const arrow = parent.querySelector(arrowExpandSelector);
+					const arrow = item.querySelector(arrowExpandSelector);
 
 					if (!arrow.classList.contains(pluginClosedClassName)) {
 						arrow.classList.add(pluginClosedClassName);
