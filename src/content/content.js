@@ -16,7 +16,13 @@ const collapseIconSelector = 'button[aria-expanded="true"]';
 const diffSectionSelector = 'div[aria-label="Diff"]';
 const commentShownSectionSelector = 'div[aria-hidden="false"]';
 const arrowExpandSelector = 'span[aria-label="Expand/collapse file"]';
-const includeClasses = ['sidebar-expander-panel-heading', 'ak-navigation-resize-button', 'collapse-sidebar-button', pluginClosedClassName];
+const includeClasses = [
+	'sidebar-expander-panel-heading',
+	'ak-navigation-resize-button',
+	'collapse-sidebar-button',
+	'left-sidebar-resize-button',
+	pluginClosedClassName
+];
 const textBtn = 'Difference Plugin';
 
 /** Setting default hiddenFiles getting it from localstorage **/
@@ -207,7 +213,7 @@ function closeDescription (){
 
 
 function startProcessingPlugin () {
-	const content = document.querySelector('div[data-testid="Content"]');
+	const content = document.querySelector('main[id="main"]');
 
 	if (!content) {
 		return
