@@ -211,14 +211,37 @@ function closeDescription (){
 	});
 }
 
+const MAX_ITERATIONS = 3;
 
-function startProcessingPlugin () {
-	const content = document.querySelector('main[id="main"]');
+let interval = null;
+let currentIteration = 0;
+
+function startProcessingPlugin (contentProp) {
+	const content = contentProp || document.querySelector('main[id="main"]');
+
+    if(!content){
+        interval = setInterval(() => {
+            currentIteration++;
+            const content = contentProp || document.querySelector('main[id="main"]');
+
+            if(content){
+                startProcessingPlugin(content)
+                clearInterval(interval);
+
+                return;
+            }
+
+            if(currentIteration >= MAX_ITERATIONS){
+                clearInterval(interval);
+            }
+        }, 500)
+    }
 
 	if (!content) {
 		return
 	}
 
+    /** Added interval to wait till content renders **/
 	const config = { attributes: false, childList: true, subtree: true };
 
 	const callback = () => {
