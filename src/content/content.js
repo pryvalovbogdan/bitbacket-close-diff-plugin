@@ -217,12 +217,12 @@ let interval = null;
 let currentIteration = 0;
 
 function startProcessingPlugin (contentProp) {
-	const content = contentProp || document.querySelector('main[id="main"]');
+	const content = contentProp || document.querySelector('#root');
 
     if(!content){
         interval = setInterval(() => {
             currentIteration++;
-            const content = contentProp || document.querySelector('main[id="main"]');
+            const content = contentProp || document.querySelector('.prCssVarContainer');
 
             if(content){
                 startProcessingPlugin(content)
